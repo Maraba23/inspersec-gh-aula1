@@ -10,10 +10,11 @@ except Exception as e:
     sys.exit(e)
 
 class Pointer:
-    local_player = 0 # na aula vamos pegar nosso local player
+    local_player = 0x18AC00
 
 class Offsets:
-    pass
+    health = 0xEC
+    current_ammo = 0x140
 
 class Colors:
     cyan = pm.get_color("cyan")
@@ -27,7 +28,13 @@ def main():
         pm.begin_drawing()
         pm.draw_fps(10, 10)
 
-        # Aqui vamos escrever nosso hack
+        local_player_ptr = pm.r_int(proc, base + Pointer.local_player)
+        health_ptr = pm.r_int(proc, local_player_ptr + Offsets.health)
+        current_ammo_ptr = pm.r_int(proc, local_player_ptr + Offsets.current_ammo)
+        if (health_ptr < 100):
+            pm.w_int(proc, local_player_ptr + Offsets.health, 100)
+        if (current_ammo_ptr < 30):
+            pm.w_int(proc, local_player_ptr + Offsets.current_ammo, 30)
 
         pm.end_drawing()
 
